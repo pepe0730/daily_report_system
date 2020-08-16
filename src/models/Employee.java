@@ -15,11 +15,11 @@ import javax.persistence.Table;
 @NamedQueries({
     @NamedQuery(
             name = "getAllEmployees",
-            query = "SELECT COUNT(e) FROM Employee AS e ORDER BY e.id DESC"
+            query = "SELECT e FROM Employee AS e ORDER BY e.id DESC"
             ),
     @NamedQuery(
             name = "getEmployeeCount",
-            query = "SELECT COUNT(e) FROM Employee AS e ORDER BY e.id DESC"
+            query = "SELECT COUNT(e) FROM Employee AS e"
             ),
     @NamedQuery (
             name = "checkRegisteredCode",
@@ -37,25 +37,25 @@ public class Employee {
     @Column (name = "id")
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
-    
+
     @Column (name = "code", nullable = false, unique = true)
     private String code;
-    
+
     @Column (name = "name", nullable = false)
     private String name;
-    
+
     @Column (name = "password", length = 64, nullable = false)
     private String password;
-    
+
     @Column (name = "admin_flag", nullable = false)
     private Integer admin_flag;
-    
+
     @Column (name = "created_at", nullable = false)
     private Timestamp created_at;
-    
+
     @Column (name = "updated_at", nullable = false)
     private Timestamp updated_at;
-    
+
     @Column (name = "delete_flag", nullable = false)
     private Integer delete_flag;
 
@@ -122,10 +122,10 @@ public class Employee {
     public void setDelete_flag(Integer delete_flag) {
         this.delete_flag = delete_flag;
     }
-    
-    
-    
-    
-    
-    
+
+
+
+
+
+
 }
