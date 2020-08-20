@@ -83,6 +83,7 @@ button {
 
 #flush_error {
     width: 100%;
+    padding-top: 28px;
     padding-left: 2%;
     padding-bottom: 15px;
     margin-bottom: 15px;

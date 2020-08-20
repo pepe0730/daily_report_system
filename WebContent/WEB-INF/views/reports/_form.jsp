@@ -5,7 +5,7 @@
     <div id="flush_error">
         入力内容にエラーがあります。<br />
         <c:forEach var="error" items="${errors}">
-            <c:out value="${error}"/>
+            ・<c:out value="${error}"/><br />
         </c:forEach>
     </div>
 </c:if>
@@ -14,7 +14,7 @@
 <br /><br />
 
 <label for="name">氏名</label><br />
-<input type="text" name="name" value="${sessionScope.login_employee.name}" />
+<c:out value="${sessionScope.login_employee.name}" />
 <br /><br />
 
 <label for="title">タイトル</label><br />
