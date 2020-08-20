@@ -47,13 +47,13 @@ public class ReportsIndexServlet extends HttpServlet {
                                 .setMaxResults(15)
                                 .getResultList();
 
-        long report_count = (long)em.createNamedQuery("getReportsCount", Long.class)
+        long reports_count = (long)em.createNamedQuery("getReportsCount", Long.class)
                                 .getSingleResult();
 
         em.close();
 
         request.setAttribute("reports", reports);
-        request.setAttribute("report_count", report_count);
+        request.setAttribute("reports_count", reports_count);
         request.setAttribute("page", page);
         if(request.getSession().getAttribute("flush") != null) {
             request.setAttribute("flush", request.getSession().getAttribute("flush"));
