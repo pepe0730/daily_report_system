@@ -32,7 +32,16 @@ import javax.persistence.Table;
     @NamedQuery(
             name = "getMyReportsCount",
             query = "SELECT COUNT(r) FROM Report AS r WHERE r.employee = :employee"
+            ),
+    @NamedQuery(
+            name = "getAllFollwerReports",
+            query = "SELECT r FROM Report AS r WHERE r.employee.follow_flag = 1 ORDER BY r.id DESC"
+            ),
+    @NamedQuery(
+            name = "getFollowerReportsCount",
+            query = "SELECT COUNT(r) FROM Report AS r WHERE r.employee.follow_flag = 1"
             )
+
 })
 @Entity
 public class Report {

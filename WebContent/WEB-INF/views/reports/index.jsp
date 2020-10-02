@@ -14,6 +14,7 @@
             <tbody>
                 <tr>
                     <th class="report_name">氏名</th>
+                    <th class="follow_btn">フォロー</th>
                     <th class="report_date">日付</th>
                     <th class="report_title">タイトル</th>
                     <th class="report_action">操作</th>
@@ -21,10 +22,37 @@
                 <c:forEach var="report" items="${reports}" varStatus="status">
                     <tr class="row${status.count % 2}">
                         <td class="report_name"><c:out value="${report.employee.name}" /></td>
+                        <td class="follow_btn">
+                            <c:choose>
+
+                                <c:when test="${sessionScope.login_employee.code == report.employee.code}">
+                                </c:when>
+
+                                <c:otherwise>
+                                    <c:choose>
+                                        <c:when test="${report.employee.follow_flag == 0}">
+                                            <form method="POST" action="<c:url value='/follows/create' />">
+                                                <input type="hidden" name="_token" value="${_token }">
+                                                <input type="hidden" name="report.employee.code" value="${report.employee.code }">
+                                                <input type="hidden" name="from" value="index">
+                                                <p><button type="submit">フォローする</button></p>
+                                            </form>
+                                        </c:when>
+                                        <c:otherwise>
+                                            <form method="POST" action="<c:url value='/follows/destroy' />">
+                                                <input type="hidden" name="_token" value="${_token }">
+                                                <input type="hidden" name="report.employee.code" value="${report.employee.code }">
+                                                <input type="hidden" name="from" value="index">
+                                                <p><button type="submit">フォロー解除する</button></p>
+                                            </form>
+                                        </c:otherwise>
+                                    </c:choose>
+                                </c:otherwise>
+                            </c:choose>
+                        </td>
                         <td class="report_date"><fmt:formatDate value='${report.report_date}' pattern='yyyy-MM-dd'/></td>
                         <td class="report_title">${report.title}</td>
                         <td class="report_action"><a href="<c:url value='/reports/show?id=${report.id}'/>">詳細を見る</a></td>
-
                     </tr>
                 </c:forEach>
             </tbody>
@@ -43,6 +71,5 @@
             </c:forEach>
         </div>
         <p><a href="<c:url value='/reports/new' />">新規日報の登録</a></p>
-
     </c:param>
 </c:import>
