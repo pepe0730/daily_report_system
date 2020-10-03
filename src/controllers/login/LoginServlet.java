@@ -1,6 +1,8 @@
 package controllers.login;
 
 import java.io.IOException;
+import java.util.Iterator;
+import java.util.List;
 
 import javax.persistence.EntityManager;
 import javax.persistence.NoResultException;
@@ -12,6 +14,8 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import models.Employee;
+import models.Follow;
+import models.Report;
 import utils.DBUtil;
 import utils.EncryptUtil;
 
@@ -55,13 +59,14 @@ public class LoginServlet extends HttpServlet {
      */
     //ログイン処理
     protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+
         //認証結果を格納する変数
         Boolean check_result =false;
 
         String code = request.getParameter("code");
         String plain_pass = request.getParameter("password");
 
-        Employee e = null;
+        Employee employee = null;
 
         if(code != null && !code.equals("") && plain_pass != null && !plain_pass.equals("")) {
             EntityManager em = DBUtil.createEntityManager();
@@ -71,7 +76,7 @@ public class LoginServlet extends HttpServlet {
                     );
             //社員番号とパスワードが正しいかをチェックする
             try {
-                e = em.createNamedQuery("checkLoginCodeAndPassword", Employee.class)
+                employee = em.createNamedQuery("checkLoginCodeAndPassword", Employee.class)
                         .setParameter("code", code)
                         .setParameter("pass", password)
                         .getSingleResult();
@@ -79,7 +84,7 @@ public class LoginServlet extends HttpServlet {
 
             em.close();
 
-            if (e != null) {
+            if (employee != null) {
                 check_result = true;
             }
         }
@@ -94,7 +99,43 @@ public class LoginServlet extends HttpServlet {
             rd.forward(request, response);
         } else {
             //認証できたらログイン状態にしてトップページへリダイレクト
-            request.getSession().setAttribute("login_employee", e);
+            request.getSession().setAttribute("login_employee", employee);
+
+            //Follow_flagの更新作業
+            EntityManager em = DBUtil.createEntityManager();
+
+            List<Report> reports = em.createNamedQuery("getAllReports", Report.class)
+                    .getResultList();
+
+            Iterator<Report> reportsIterator = reports.iterator();
+            Follow followCheck;
+            while(reportsIterator.hasNext()) {
+                Report report = reportsIterator.next();
+
+                try {
+                    followCheck = em.createNamedQuery("isRegisterdFollows", Follow.class)
+                            .setParameter("employee_code", employee.getCode())
+                            .setParameter("follow_code", report.getEmployee().getCode())
+                            .getSingleResult();
+                } catch (Exception e) {
+                    followCheck = null;
+                }
+
+                if (followCheck == null) {
+                    report.getEmployee().setFollow_flag(0);
+                } else {
+                    report.getEmployee().setFollow_flag(1);
+                    System.out.println(followCheck.getFollow_code());
+                    System.out.println(report.getEmployee().getName());
+                }
+
+                em.getTransaction().begin();
+                em.persist(report);
+                em.getTransaction().commit();
+            }
+
+            em.close();
+
 
             request.getSession().setAttribute("flush", "ログインしました。");
             response.sendRedirect(request.getContextPath() + "/");

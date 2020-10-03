@@ -1,4 +1,4 @@
-package controlles.follow;
+package controllers.follow;
 
 import java.io.IOException;
 

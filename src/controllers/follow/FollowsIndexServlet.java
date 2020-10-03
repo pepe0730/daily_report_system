@@ -1,4 +1,4 @@
-package controlles.follow;
+package controllers.follow;
 
 import java.io.IOException;
 import java.util.Iterator;
@@ -39,9 +39,7 @@ public class FollowsIndexServlet extends HttpServlet implements Servlet {
     protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
         // TODO Auto-generated method stub
         String _token = request.getSession().getId();
-
         EntityManager em = DBUtil.createEntityManager();
-
         Employee employee = (Employee)request.getSession().getAttribute("login_employee");
 
         int page = 1;
@@ -57,13 +55,13 @@ public class FollowsIndexServlet extends HttpServlet implements Servlet {
                                             .getResultList();
 
 
-
         long reports_count = em.createNamedQuery("getFollowerReportsCount", Long.class)
                                             .getSingleResult();
 
         Iterator<Report> reportsIterator = reports.iterator();
         Follow followCheck;
         while(reportsIterator.hasNext()) {
+            //全てリセット（1つ前にログインしていた人のフォロー情報を削除)
             Report report = reportsIterator.next();
 
             try {
